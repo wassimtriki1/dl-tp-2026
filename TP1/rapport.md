@@ -216,7 +216,7 @@ Le dépôt a été initialisé localement, connecté à GitHub via un Personal A
 
 Perceptron multicouche (MLP) avec une couche d'entrée de 3 neurones, une couche cachée de 4 neurones, et une couche de sortie de 2 neurones.
 
-*(📸 Insérer ici la photo du schéma dessiné à la main : `![Schéma MLP](captures/schema_mlp.jpg)`)*
+![Schéma MLP](captures/schema_mlp.jpg)
 
 **Nombre total de paramètres, sans les biais :**
 - Couche 1 (entrée → cachée) : 3 × 4 = 12
