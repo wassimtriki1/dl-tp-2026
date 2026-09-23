@@ -226,7 +226,7 @@ Perceptron multicouche (MLP) avec une couche d'entrée de 3 neurones, une couche
 - Couche 1 : 12 + 4 = 16
 - Couche 2 : 8 + 2 = 10
 - **Total avec biais = 26**
-  ![Schéma MLP](captures/schema_mlp.jpg)
+  <img src="captures/schema_mlp.jpg" width="500">
 
 ### 3.2 Équations et dimensions
 
