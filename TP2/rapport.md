@@ -73,3 +73,10 @@ RMSprop et Adam convergent tous les deux nettement plus vite que SGD et Momentum
 **Comparaison SGD simple vs Momentum — effet de l'ajout du moment :**
 
 La courbe de SGD simple décroît lentement et de façon quasi linéaire tout au long des 30 epochs, sans jamais accélérer (loss finale : 0.6234). La courbe de Momentum démarre à un niveau similaire, mais accélère nettement après les 10-15 premières epochs et atteint une loss finale bien plus basse (0.5588). Cet effet s'explique par le fait que le momentum accumule une partie de la direction des mises à jour précédentes : dans les zones où le gradient pointe de façon cohérente dans la même direction sur plusieurs itérations successives, cette « inertie » accumulée accélère la descente, un peu comme une boule qui prend de l'élan en dévalant une pente régulière, plutôt que de repartir de zéro à chaque pas comme le fait SGD simple.
+**Résultats obtenus sur le test set (modèle entraîné avec Adam, 30 epochs) :**
+
+![Résultats des métriques](captures/evaluate_metrics.png)
+
+```
+Precision: 0.7424 | Recall: 0.7266 | F1: 0.7344 | AUC: 0.8027
+```
