@@ -99,6 +99,7 @@ La courbe de SGD simple décroît lentement et de façon quasi linéaire tout au
 La **Précision (Precision)** mesure, parmi tous les patients que le modèle a classés comme malades, la proportion de ceux qui le sont réellement : Precision = VP / (VP + FP). Une précision élevée signifie peu de fausses alertes.
 
 Le **Rappel (Recall)** mesure, parmi tous les patients réellement malades, la proportion que le modèle a correctement identifiés : Recall = VP / (VP + FN). Un rappel élevé signifie que le modèle manque peu de cas réels.
+
 **Résultats obtenus sur le test set (modèle entraîné avec Adam, 30 epochs) :**
 
 ![Résultats des métriques](captures/evaluate_metrics.png)
