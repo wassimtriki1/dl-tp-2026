@@ -51,3 +51,25 @@ optimizer = optim.SGD(model.parameters(), lr=0.01, weight_decay=1e-3)
 **Différence conceptuelle entre régularisation L1 et L2 sur les poids du réseau :**
 
 La régularisation **L1** (somme des valeurs absolues) a tendance à pousser certains poids **exactement à zéro**, réalisant une forme de sélection automatique de features : le réseau "désactive" complètement certaines connexions qu'il juge inutiles, produisant des modèles parcimonieux (sparse). La régularisation **L2** (somme des carrés) pousse tous les poids à devenir **petits** de façon uniforme, mais très rarement exactement nuls — elle répartit son effet de façon plus douce sur l'ensemble des paramètres plutôt que d'en éliminer certains complètement.
+## 3. Comparaison des optimiseurs et TensorBoard
+
+Quatre optimiseurs comparés sur 30 epochs (lr=0.001) : SGD simple, SGD+Momentum (0.9), RMSprop, Adam.
+
+![Comparaison des optimiseurs](captures/tensorboard_optimizers.png)
+
+**Résultats finaux (loss d'entraînement, epoch 30) :**
+
+| Optimiseur | Loss finale |
+|---|---|
+| SGD | 0.6234 |
+| Momentum | 0.5588 |
+| RMSprop | **0.5353** (meilleur) |
+| Adam | 0.5409 |
+
+**Quel optimiseur converge le plus rapidement initialement ?**
+
+RMSprop et Adam convergent tous les deux nettement plus vite que SGD et Momentum dès les premières epochs (loss ≈ 0.60 après l'epoch 1, contre 0.66-0.69 pour SGD et Momentum). RMSprop a une très légère avance et finit par obtenir la meilleure loss finale (0.5353), tandis qu'Adam, après une convergence rapide initiale, se met à osciller légèrement après l'epoch 8-9 sans progresser davantage.
+
+**Comparaison SGD simple vs Momentum — effet de l'ajout du moment :**
+
+La courbe de SGD simple décroît lentement et de façon quasi linéaire tout au long des 30 epochs, sans jamais accélérer (loss finale : 0.6234). La courbe de Momentum démarre à un niveau similaire, mais accélère nettement après les 10-15 premières epochs et atteint une loss finale bien plus basse (0.5588). Cet effet s'explique par le fait que le momentum accumule une partie de la direction des mises à jour précédentes : dans les zones où le gradient pointe de façon cohérente dans la même direction sur plusieurs itérations successives, cette « inertie » accumulée accélère la descente, un peu comme une boule qui prend de l'élan en dévalant une pente régulière, plutôt que de repartir de zéro à chaque pas comme le fait SGD simple.
