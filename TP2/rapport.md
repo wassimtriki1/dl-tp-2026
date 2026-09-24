@@ -1,5 +1,7 @@
 # TP2 — Régularisation, optimisation et métriques
 
+
+**Note :** le fichier `data/cardio_train.csv` n'est pas inclus dans ce dépôt (exclu via `.gitignore`, fichier de données de ~2.9 Mo). Il est téléchargeable sur https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset et doit être placé dans `TP2/data/` avant d'exécuter les scripts.
 **Auteur :** Wassim Triki
 **Identifiant TSP :** wtriki
 
