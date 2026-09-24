@@ -2,7 +2,9 @@
 
 
 **Note :** le fichier `data/cardio_train.csv` n'est pas inclus dans ce dépôt (exclu via `.gitignore`, fichier de données de ~2.9 Mo). Il est téléchargeable sur https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset et doit être placé dans `TP2/data/` avant d'exécuter les scripts.
+
 **Auteur :** Wassim Triki
+
 **Identifiant TSP :** wtriki
 
 ---
@@ -13,6 +15,8 @@ Dataset utilisé : Cardiovascular Disease dataset (Kaggle), chargé via une clas
 
 **Résultat du test du dataset :**
 
+Taille totale du dataset : 70000
+Shape features: torch.Size([64, 16]), Shape labels: torch.Size([64, 1])
 
 **Pourquoi `StandardScaler()` sur l'ensemble du dataset avant le split est une mauvaise pratique (data leakage) ?**
 
