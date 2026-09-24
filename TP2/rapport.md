@@ -55,6 +55,22 @@ La régularisation **L1** (somme des valeurs absolues) a tendance à pousser cer
 
 Quatre optimiseurs comparés sur 30 epochs (lr=0.001) : SGD simple, SGD+Momentum (0.9), RMSprop, Adam.
 
+**Entraînement SGD :**
+
+![Entraînement SGD](captures/train_sgd.png)
+
+**Entraînement Momentum :**
+
+![Entraînement Momentum](captures/train_momentum.png)
+
+**Entraînement RMSprop :**
+
+![Entraînement RMSprop](captures/train_rmsprop.png)
+
+**Entraînement Adam :**
+
+![Entraînement Adam](captures/train_adam.png)
+
 ![Comparaison des optimiseurs](captures/tensorboard_optimizers.png)
 
 **Résultats finaux (loss d'entraînement, epoch 30) :**
@@ -65,7 +81,6 @@ Quatre optimiseurs comparés sur 30 epochs (lr=0.001) : SGD simple, SGD+Momentum
 | Momentum | 0.5588 |
 | RMSprop | **0.5353** (meilleur) |
 | Adam | 0.5409 |
-
 **Quel optimiseur converge le plus rapidement initialement ?**
 
 RMSprop et Adam convergent tous les deux nettement plus vite que SGD et Momentum dès les premières epochs (loss ≈ 0.60 après l'epoch 1, contre 0.66-0.69 pour SGD et Momentum). RMSprop a une très légère avance et finit par obtenir la meilleure loss finale (0.5353), tandis qu'Adam, après une convergence rapide initiale, se met à osciller légèrement après l'epoch 8-9 sans progresser davantage.
@@ -73,6 +88,7 @@ RMSprop et Adam convergent tous les deux nettement plus vite que SGD et Momentum
 **Comparaison SGD simple vs Momentum — effet de l'ajout du moment :**
 
 La courbe de SGD simple décroît lentement et de façon quasi linéaire tout au long des 30 epochs, sans jamais accélérer (loss finale : 0.6234). La courbe de Momentum démarre à un niveau similaire, mais accélère nettement après les 10-15 premières epochs et atteint une loss finale bien plus basse (0.5588). Cet effet s'explique par le fait que le momentum accumule une partie de la direction des mises à jour précédentes : dans les zones où le gradient pointe de façon cohérente dans la même direction sur plusieurs itérations successives, cette « inertie » accumulée accélère la descente, un peu comme une boule qui prend de l'élan en dévalant une pente régulière, plutôt que de repartir de zéro à chaque pas comme le fait SGD simple.
+
 **Résultats obtenus sur le test set (modèle entraîné avec Adam, 30 epochs) :**
 
 ![Résultats des métriques](captures/evaluate_metrics.png)
