@@ -71,6 +71,8 @@ Quatre optimiseurs comparés sur 30 epochs (lr=0.001) : SGD simple, SGD+Momentum
 
 ![Entraînement Adam](captures/train_adam.png)
 
+**Comparaison des courbes de loss sur TensorBoard :**
+
 ![Comparaison des optimiseurs](captures/tensorboard_optimizers.png)
 
 **Résultats finaux (loss d'entraînement, epoch 30) :**
@@ -81,6 +83,7 @@ Quatre optimiseurs comparés sur 30 epochs (lr=0.001) : SGD simple, SGD+Momentum
 | Momentum | 0.5588 |
 | RMSprop | **0.5353** (meilleur) |
 | Adam | 0.5409 |
+
 **Quel optimiseur converge le plus rapidement initialement ?**
 
 RMSprop et Adam convergent tous les deux nettement plus vite que SGD et Momentum dès les premières epochs (loss ≈ 0.60 après l'epoch 1, contre 0.66-0.69 pour SGD et Momentum). RMSprop a une très légère avance et finit par obtenir la meilleure loss finale (0.5353), tandis qu'Adam, après une convergence rapide initiale, se met à osciller légèrement après l'epoch 8-9 sans progresser davantage.
@@ -89,6 +92,13 @@ RMSprop et Adam convergent tous les deux nettement plus vite que SGD et Momentum
 
 La courbe de SGD simple décroît lentement et de façon quasi linéaire tout au long des 30 epochs, sans jamais accélérer (loss finale : 0.6234). La courbe de Momentum démarre à un niveau similaire, mais accélère nettement après les 10-15 premières epochs et atteint une loss finale bien plus basse (0.5588). Cet effet s'explique par le fait que le momentum accumule une partie de la direction des mises à jour précédentes : dans les zones où le gradient pointe de façon cohérente dans la même direction sur plusieurs itérations successives, cette « inertie » accumulée accélère la descente, un peu comme une boule qui prend de l'élan en dévalant une pente régulière, plutôt que de repartir de zéro à chaque pas comme le fait SGD simple.
 
+## 4. Analyse des métriques (Précision, Rappel, F1, AUC)
+
+**Définitions :**
+
+La **Précision (Precision)** mesure, parmi tous les patients que le modèle a classés comme malades, la proportion de ceux qui le sont réellement : Precision = VP / (VP + FP). Une précision élevée signifie peu de fausses alertes.
+
+Le **Rappel (Recall)** mesure, parmi tous les patients réellement malades, la proportion que le modèle a correctement identifiés : Recall = VP / (VP + FN). Un rappel élevé signifie que le modèle manque peu de cas réels.
 **Résultats obtenus sur le test set (modèle entraîné avec Adam, 30 epochs) :**
 
 ![Résultats des métriques](captures/evaluate_metrics.png)
@@ -96,3 +106,13 @@ La courbe de SGD simple décroît lentement et de façon quasi linéaire tout au
 ```
 Precision: 0.7424 | Recall: 0.7266 | F1: 0.7344 | AUC: 0.8027
 ```
+
+Ces résultats montrent un modèle assez équilibré : sur 100 patients classés malades par le modèle, environ 74 le sont réellement (Precision), et sur 100 patients réellement malades, le modèle en détecte environ 73 (Recall). L'AUC de 0.80 indique une bonne capacité de discrimination globale entre patients malades et sains, nettement au-dessus du hasard (0.5).
+
+**Dans le contexte médical, Précision ou Rappel ?**
+
+Dans le contexte du diagnostic d'une maladie cardiovasculaire, il vaut généralement mieux privilégier un **rappel élevé**, quitte à sacrifier un peu de précision. Un faux négatif (un patient malade que le modèle classe à tort comme sain) est beaucoup plus dangereux qu'un faux positif (un patient sain classé à tort comme malade) : le premier risque de repartir sans traitement ni suivi alors qu'il en aurait besoin, tandis que le second subira au pire des examens complémentaires inutiles mais sans danger immédiat pour sa santé. Un rappel élevé garantit qu'on rate le moins possible de vrais cas, ce qui est la priorité en dépistage médical.
+
+**À quoi sert l'AUC par rapport aux métriques à seuil fixe (0.5) ?**
+
+Precision, Recall et F1 sont toutes calculées à un seuil de décision fixe (ici 0.5) : elles ne mesurent la qualité du modèle qu'à ce point de fonctionnement précis. L'AUC (aire sous la courbe ROC), au contraire, évalue la capacité du modèle à bien classer sur l'ensemble de tous les seuils possibles, en mesurant la probabilité qu'une paire (patient malade, patient sain) tirée au hasard soit correctement ordonnée par le modèle. Cela permet de juger la qualité intrinsèque du modèle indépendamment du choix arbitraire d'un seuil, ce qui est particulièrement utile quand ce seuil pourra être ajusté après coup selon le contexte clinique.
