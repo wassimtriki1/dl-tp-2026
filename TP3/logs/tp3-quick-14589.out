@@ -1,0 +1,47 @@
+Job 14589 sur starfighter-slurm-node-04-1, mode=quick
+Wed Oct 28 15:57:53 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 595.84                 Driver Version: 595.84         CUDA Version: 13.2     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA L4                      Off |   00000000:06:10.0 Off |                    0 |
+| N/A   33C    P8             15W /   72W |       0MiB /  23034MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Chargement d'ImageNet...
+Modèle mlp initialisé avec 39,897,320 paramètres.
+Device : cuda | train : 20000 images | val : 5000 images
+Epoch [1/10] | Train Loss: 7.2147 (Acc: 0.0010) | Val Loss: 7.0304 (Acc: 0.0006) | Temps train: 0.3 min, val: 0.1 min
+Epoch [2/10] | Train Loss: 6.9652 (Acc: 0.0014) | Val Loss: 6.9491 (Acc: 0.0010) | Temps train: 0.2 min, val: 0.1 min
+Epoch [3/10] | Train Loss: 6.9278 (Acc: 0.0022) | Val Loss: 6.9371 (Acc: 0.0024) | Temps train: 0.2 min, val: 0.1 min
+Epoch [4/10] | Train Loss: 6.9101 (Acc: 0.0027) | Val Loss: 6.9285 (Acc: 0.0028) | Temps train: 0.2 min, val: 0.1 min
+Epoch [5/10] | Train Loss: 6.8928 (Acc: 0.0034) | Val Loss: 6.9243 (Acc: 0.0020) | Temps train: 0.2 min, val: 0.1 min
+Epoch [6/10] | Train Loss: 6.8799 (Acc: 0.0040) | Val Loss: 6.9136 (Acc: 0.0022) | Temps train: 0.2 min, val: 0.1 min
+Epoch [7/10] | Train Loss: 6.8565 (Acc: 0.0050) | Val Loss: 6.9077 (Acc: 0.0046) | Temps train: 0.2 min, val: 0.1 min
+Epoch [8/10] | Train Loss: 6.8351 (Acc: 0.0051) | Val Loss: 6.8891 (Acc: 0.0036) | Temps train: 0.2 min, val: 0.1 min
+Epoch [9/10] | Train Loss: 6.8106 (Acc: 0.0054) | Val Loss: 6.8789 (Acc: 0.0048) | Temps train: 0.2 min, val: 0.1 min
+Epoch [10/10] | Train Loss: 6.7870 (Acc: 0.0059) | Val Loss: 6.8764 (Acc: 0.0046) | Temps train: 0.2 min, val: 0.1 min
+Chargement d'ImageNet...
+Modèle alexnet initialisé avec 61,100,840 paramètres.
+Device : cuda | train : 20000 images | val : 5000 images
+Epoch [1/10] | Train Loss: 6.9065 (Acc: 0.0006) | Val Loss: 6.8985 (Acc: 0.0008) | Temps train: 0.2 min, val: 0.1 min
+Epoch [2/10] | Train Loss: 6.8597 (Acc: 0.0014) | Val Loss: 6.8373 (Acc: 0.0022) | Temps train: 0.2 min, val: 0.1 min
+Epoch [3/10] | Train Loss: 6.7953 (Acc: 0.0019) | Val Loss: 6.8161 (Acc: 0.0028) | Temps train: 0.2 min, val: 0.1 min
+Epoch [4/10] | Train Loss: 6.7437 (Acc: 0.0029) | Val Loss: 6.7631 (Acc: 0.0034) | Temps train: 0.2 min, val: 0.1 min
+Epoch [5/10] | Train Loss: 6.6766 (Acc: 0.0034) | Val Loss: 6.6848 (Acc: 0.0036) | Temps train: 0.2 min, val: 0.1 min
+Epoch [6/10] | Train Loss: 6.6097 (Acc: 0.0049) | Val Loss: 6.6243 (Acc: 0.0050) | Temps train: 0.2 min, val: 0.1 min
+Epoch [7/10] | Train Loss: 6.5439 (Acc: 0.0054) | Val Loss: 6.5645 (Acc: 0.0048) | Temps train: 0.2 min, val: 0.1 min
+Epoch [8/10] | Train Loss: 6.4608 (Acc: 0.0066) | Val Loss: 6.5934 (Acc: 0.0062) | Temps train: 0.2 min, val: 0.1 min
+Epoch [9/10] | Train Loss: 6.3926 (Acc: 0.0080) | Val Loss: 6.4571 (Acc: 0.0068) | Temps train: 0.2 min, val: 0.1 min
+Epoch [10/10] | Train Loss: 6.3228 (Acc: 0.0100) | Val Loss: 6.3982 (Acc: 0.0108) | Temps train: 0.2 min, val: 0.1 min

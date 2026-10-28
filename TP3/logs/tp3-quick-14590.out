@@ -1,0 +1,34 @@
+Job 14590 sur starfighter-slurm-node-02-1, mode=deep
+Wed Oct 28 15:58:34 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 595.84                 Driver Version: 595.84         CUDA Version: 13.2     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA L4                      Off |   00000000:06:10.0 Off |                    0 |
+| N/A   35C    P8             17W /   72W |       0MiB /  23034MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Chargement d'ImageNet...
+Modèle alexnet_deep initialisé avec 62,871,080 paramètres.
+Device : cuda | train : 20000 images | val : 5000 images
+Epoch [1/10] | Train Loss: 6.9081 (Acc: 0.0010) | Val Loss: 6.9079 (Acc: 0.0012) | Temps train: 0.5 min, val: 0.1 min
+Epoch [2/10] | Train Loss: 6.9015 (Acc: 0.0009) | Val Loss: 6.9077 (Acc: 0.0018) | Temps train: 0.2 min, val: 0.1 min
+Epoch [3/10] | Train Loss: 6.8941 (Acc: 0.0013) | Val Loss: 6.8993 (Acc: 0.0010) | Temps train: 0.2 min, val: 0.1 min
+Epoch [4/10] | Train Loss: 6.8542 (Acc: 0.0019) | Val Loss: 6.8563 (Acc: 0.0022) | Temps train: 0.2 min, val: 0.1 min
+Epoch [5/10] | Train Loss: 6.7984 (Acc: 0.0023) | Val Loss: 6.8178 (Acc: 0.0022) | Temps train: 0.2 min, val: 0.1 min
+Epoch [6/10] | Train Loss: 6.7747 (Acc: 0.0022) | Val Loss: 6.8117 (Acc: 0.0016) | Temps train: 0.2 min, val: 0.1 min
+Epoch [7/10] | Train Loss: 6.7440 (Acc: 0.0024) | Val Loss: 6.7712 (Acc: 0.0036) | Temps train: 0.2 min, val: 0.1 min
+Epoch [8/10] | Train Loss: 6.6927 (Acc: 0.0027) | Val Loss: 6.7448 (Acc: 0.0036) | Temps train: 0.2 min, val: 0.1 min
+Epoch [9/10] | Train Loss: 6.6468 (Acc: 0.0040) | Val Loss: 6.6891 (Acc: 0.0052) | Temps train: 0.2 min, val: 0.1 min
+Epoch [10/10] | Train Loss: 6.6119 (Acc: 0.0047) | Val Loss: 6.6660 (Acc: 0.0040) | Temps train: 0.2 min, val: 0.1 min

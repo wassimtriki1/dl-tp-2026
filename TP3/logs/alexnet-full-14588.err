@@ -1,0 +1,20 @@
+Traceback (most recent call last):
+  File "/mnt/hdd/homes/wtriki/TP3/train_imagenet.py", line 257, in <module>
+    train_model(model_name="alexnet", subset_size=None, num_epochs=50)
+  File "/mnt/hdd/homes/wtriki/TP3/train_imagenet.py", line 179, in train_model
+    writer = SummaryWriter(log_dir=f"runs/{run_tag}")
+  File "/mnt/hdd/homes/wtriki/miniforge3/envs/deeplearning/lib/python3.10/site-packages/torch/utils/tensorboard/writer.py", line 250, in __init__
+    self._get_file_writer()
+  File "/mnt/hdd/homes/wtriki/miniforge3/envs/deeplearning/lib/python3.10/site-packages/torch/utils/tensorboard/writer.py", line 265, in _get_file_writer
+    self.file_writer = FileWriter(
+  File "/mnt/hdd/homes/wtriki/miniforge3/envs/deeplearning/lib/python3.10/site-packages/torch/utils/tensorboard/writer.py", line 76, in __init__
+    self.event_writer = EventFileWriter(
+  File "/mnt/hdd/homes/wtriki/miniforge3/envs/deeplearning/lib/python3.10/site-packages/tensorboard/summary/writer/event_file_writer.py", line 72, in __init__
+    tf.io.gfile.makedirs(logdir)
+  File "/mnt/hdd/homes/wtriki/miniforge3/envs/deeplearning/lib/python3.10/site-packages/tensorboard/compat/tensorflow_stub/io/gfile.py", line 909, in makedirs
+    return get_filesystem(path).makedirs(path)
+  File "/mnt/hdd/homes/wtriki/miniforge3/envs/deeplearning/lib/python3.10/site-packages/tensorboard/compat/tensorflow_stub/io/gfile.py", line 208, in makedirs
+    os.makedirs(path, exist_ok=True)
+  File "/mnt/hdd/homes/wtriki/miniforge3/envs/deeplearning/lib/python3.10/os.py", line 225, in makedirs
+    mkdir(name, mode)
+FileNotFoundError: [Errno 2] No such file or directory: 'runs/alexnet_subNone_lr0.0001'
