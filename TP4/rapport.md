@@ -7,11 +7,9 @@
 | `train_music.py` | Chargement, vocabulaire, `MusicDataset`, `MusicModel` (RNN/LSTM), `evaluate_model`, `train_model` (norme des gradients, clipping, Early Stopping), `generate_music`. Modes : `--mode explore`, `quick`, `generate`, `full` |
 | `run_music.sh` | Job Slurm (`sbatch run_music.sh [mode]`) |
 | `figures/` | Courbes TensorBoard insérées dans ce rapport |
-| `captures/` | Captures d'écran du terminal |
+| `captures/` | Captures d'écran (terminal, ABC Player) |
 | `generations/` | Partitions ABC générées |
 | `logs/` | Sorties Slurm des jobs |
-
-> Les passages marqués **⚠️ À COMPLÉTER** dépendent des résultats de mes jobs.
 
 ---
 
@@ -27,18 +25,34 @@ def load_data(file_path):
 
 #### 1.a.1 Nombre de partitions
 
-**⚠️ À COMPLÉTER**
+Résultat de `sbatch run_music.sh explore` (job 14954) :
 
-- `train.json` : **…** partitions
-- `validation.json` : **…** partitions
+- `train.json` : **214 122** partitions
+- `validation.json` : **2 162** partitions
+
+![Exploration du jeu de données](captures/02_explore_ex1_ex2.png)
 
 #### 1.a.2 Première partition et rôle de l'en-tête
 
-**⚠️ À COMPLÉTER** (texte de `train_data[0]["abc notation"]`)
+```
+X:1
+L:1/8
+M:4/4
+K:Emin
+ defg afdf |1 e2 ef g2 fe | efe^d e3 B :|2 g2 bg f2 af | efe^d e2 e2 ||
+```
 
-```
-…
-```
+Lecture de cette partition (collée dans ABC Player) : un air en **mi mineur**, à **4 temps**, écrit en **croches** par défaut. Les quatre premières lignes sont l'en-tête : `X:1`, `L:1/8`, `M:4/4` et `K:Emin`. Il n'y a pas de titre `T:` : dans ce jeu de données, les en-têtes se limitent souvent à l'essentiel. La ligne de notes contient :
+- des **notes** (`d e f g a`, minuscules = octave aiguë ; `B` majuscule = octave médium) et des **durées** relatives à `L:1/8` (`e2` = noire, `e3` = noire pointée) ;
+- des **barres de mesure** `|`, une **barre finale** `||` et une **reprise** `:|` ;
+- des **fins alternatives** `|1` et `:|2` (1re et 2de fois) ;
+- une **altération** `^d` (ré dièse), la sensible de mi mineur, qui n'est pas dans l'armure.
+
+![Première partition dans ABC Player](captures/06_abc_player_train0.png)
+
+ABC Player affiche « No errors » : on voit l'armure à un dièse (mi mineur), la mesure 4/4 et les crochets « 1 » et « 2 » des deux fins alternatives.
+
+Vérification du rythme avec `L:1/8` et `M:4/4` : chaque mesure doit faire 8 croches. Par exemple `e2 ef g2 fe` = 2 + 1 + 1 + 2 + 1 + 1 = 8 ✓ et `efe^d e3 B` = 1 + 1 + 1 + 1 + 3 + 1 = 8 ✓.
 
 En-tête ABC (lignes `Lettre:valeur` avant les notes) :
 
@@ -72,11 +86,10 @@ def pad_or_truncate(sequence, max_length=SEQ_LENGTH):
 
 #### 1.b.1 Statistiques
 
-**⚠️ À COMPLÉTER**
-
-- Taille du vocabulaire : **…** caractères uniques
-- Longueur moyenne : **…** caractères ; longueur maximale : **…** caractères
-- Partitions plus longues que 500 caractères (donc tronquées) : **…**
+- Taille du vocabulaire : **95 caractères uniques**, soit le retour à la ligne `\n` plus 94 des 95 caractères ASCII imprimables (de l'espace à `~`) : seul `%` est absent (en ABC, `%` sert à écrire des commentaires, qui ont été retirés du jeu de données) :
+  `'\n !"#$&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~'`
+- Longueur moyenne : **290,1 caractères** ; longueur maximale : **2 968 caractères** (médiane 257, 95e percentile 548)
+- Partitions plus longues que 500 caractères (donc tronquées) : **14 697, soit 6,9 %** du jeu d'entraînement
 
 #### 1.b.2 Pourquoi `sorted(...)` ?
 
@@ -90,13 +103,13 @@ Le modèle se chargerait **sans aucune erreur** (les dimensions sont identiques)
 
 #### 1.b.3 Pourquoi tronquer à 500 plutôt que padder jusqu'à `max_len` ?
 
-`max_len` (**…** caractères) est bien plus grand que la longueur typique (**…** en moyenne). Padder tout le monde jusqu'à `max_len` aurait trois coûts :
+`max_len` (**2 968** caractères) est plus de **10 fois** plus grand que la longueur typique (**290** en moyenne, **257** en médiane). Padder tout le monde jusqu'à `max_len` aurait trois coûts :
 
-- **Temps de calcul** : un RNN traite les pas de temps **séquentiellement** (h_t dépend de h_{t-1}), on ne peut pas paralléliser sur la longueur. Le coût d'un batch est proportionnel à `seq_len` : passer de 500 à `max_len` multiplierait le temps d'une époque par environ `max_len / 500` (**…**), alors que l'immense majorité des pas de temps ajoutés ne contiendrait que des espaces.
+- **Temps de calcul** : un RNN traite les pas de temps **séquentiellement** (h_t dépend de h_{t-1}), on ne peut pas paralléliser sur la longueur. Le coût d'un batch est proportionnel à `seq_len` : passer de 500 à `max_len` multiplierait le temps d'une époque par environ `max_len / 500` (**≈ 5,9**), alors que l'immense majorité des pas de temps ajoutés ne contiendrait que des espaces.
 - **Mémoire GPU** : la BPTT garde en mémoire les activations de **tous** les pas de temps pour le backward. La mémoire des activations est proportionnelle à `batch_size × seq_len × hidden_size` ; elle exploserait d'autant, au point de forcer à réduire le batch.
 - **Apprentissage** : la plupart des cibles deviendraient du padding. La loss serait dominée par la tâche triviale « après un espace de padding vient un espace », ce qui dilue le signal utile et biaise le modèle vers la prédiction d'espaces. Les séquences très longues aggravent aussi le *vanishing/exploding gradient* (le gradient traverse plus de pas).
 
-Tronquer à 500 (≈ 2 × la moyenne) garde **la quasi-totalité** des partitions entières (**…** % seulement sont coupées) et ne perd que la fin des morceaux les plus longs. Le padding reste modéré, et le coût d'un batch est maîtrisé.
+Tronquer à 500 (≈ 2 × la moyenne) garde **la quasi-totalité** des partitions entières (**6,9 %** seulement sont coupées) et ne perd que la fin des morceaux les plus longs. Le padding reste modéré, et le coût d'un batch est maîtrisé.
 
 ---
 
@@ -121,7 +134,7 @@ Avec `SEQ_LENGTH = 500` et `BATCH_SIZE = 128`, chaque séquence de 500 indices d
 
 (sauf le dernier batch de l'époque, qui contient le reste, par exemple `(16, 499)` pour 10 000 partitions : 10 000 = 78 × 128 + 16.)
 
-Vérifié par `--mode explore` : **⚠️ À COMPLÉTER** (`Shapes d'un batch : x = (128, 499) …`). Le contrôle `x[0, 1:6] == y[0, 0:5]` confirme le décalage d'un pas de temps : la cible au temps t est l'entrée au temps t + 1.
+Vérifié par `--mode explore` : `Shapes d'un batch : x = (128, 499) (torch.int64), y = (128, 499) (torch.int64)`, et `x[0, 1:6] = [26, 17, 0, 44, 26]` = `y[0, 0:5] = [26, 17, 0, 44, 26]`. Le contrôle `x[0, 1:6] == y[0, 0:5]` confirme le décalage d'un pas de temps : la cible au temps t est l'entrée au temps t + 1.
 
 **Pourquoi `torch.long` ?** Ces tenseurs contiennent des **indices de catégories**, pas des grandeurs continues :
 - `nn.Embedding` attend des indices entiers (`LongTensor` ou `IntTensor`) pour aller chercher une ligne de sa table ; un `float` n'a pas de sens comme numéro de ligne.
@@ -167,7 +180,12 @@ self.fc = nn.Linear(hidden_size, vocab_size)
 | RNN | 24 320 | 394 240 | 48 735 | **467 295** |
 | LSTM | 24 320 | 1 576 960 | 48 735 | **1 650 015** |
 
-Vérification par `count_parameters` : avec V = 95, j'obtiens bien **467 295** (RNN) et **1 650 015** (LSTM). Avec le vrai vocabulaire (V = **…**), `--mode explore` donne : **⚠️ À COMPLÉTER**.
+Vérification par `count_parameters` : avec V = 95, j'obtiens bien **467 295** (RNN) et **1 650 015** (LSTM). Le vrai vocabulaire faisant justement **V = 95**, `--mode explore` donne exactement les mêmes valeurs, couche par couche :
+
+```
+RNN  | embedding :     24,320 | rnn  :   394,240 | fc :  48,735 | total :    467,295
+LSTM | embedding :     24,320 | lstm : 1,576,960 | fc :  48,735 | total :  1,650,015
+```
 
 **Le bloc LSTM a-t-il exactement 4 fois plus de paramètres que le bloc RNN ?** **Oui** : 4 × 394 240 = 1 576 960. Un RNN calcule une seule transformation affine de (x_t, h_{t−1}) ; un LSTM en calcule quatre, de mêmes dimensions (une par porte i, f, g, o). En revanche, le **modèle complet** n'a pas 4 fois plus de paramètres (1 650 015 / 467 295 ≈ 3,53), car l'Embedding et la couche `fc` sont identiques dans les deux cas.
 
@@ -226,7 +244,11 @@ Le `-1` laisse PyTorch calculer la dimension : c'est le **nombre total de caract
 
 #### 3.3 Analyse expérimentale
 
-**⚠️ À COMPLÉTER** avec les courbes et le tableau des 3 runs.
+Job **14956** (`sbatch run_music.sh quick`), les 3 runs à la suite sur un GPU :
+
+![Logs Run 1 et début du Run 2](captures/03_logs_ex3_run1_run2.png)
+
+![Logs Run 2 et Run 3](captures/04_logs_ex3_run2_run3.png)
 
 ![Loss de validation](figures/ex3_loss_val.png)
 
@@ -234,13 +256,27 @@ Le `-1` laisse PyTorch calculer la dimension : c'est le **nombre total de caract
 
 ![Norme des gradients](figures/ex3_gradnorm.png)
 
+`GradNorm/step` n'enregistre qu'une itération sur 20 : le pic du Run 2 (une seule itération à 5,2 × 10⁸) tombe entre deux points enregistrés et n'apparaît donc pas sur cette courbe. On le voit en revanche nettement sur la moyenne par époque `GradNorm/Epoch_Avg`, calculée sur **toutes** les itérations :
+
+![Norme moyenne des gradients par époque](figures/ex3_gradnorm_epoch.png)
+
+Sur `GradNorm/step`, on voit aussi que les normes du LSTM (vert) sont **3 à 4 fois plus faibles** et plus régulières que celles des deux RNN, dès la 200e itération.
+
 | Run | Modèle | Clipping | Meilleure Val Loss | Val Acc finale | Norme moyenne des gradients | Norme max | Temps / époque |
 |---|---|---|---|---|---|---|---|
-| 1 | RNN | aucun | … | … | … | … | … |
-| 2 | RNN | 1,0 | … | … | … | … | … |
-| 3 | LSTM | 1,0 | … | … | … | … | … |
+| 1 | RNN | aucun | 0,7176 (ép. 11) | 77,33 % | 0,22 – 0,36 (0,70 à l'ép. 1) | 7,42 (ép. 1), puis ≈ 1,1 (ép. 6 et 13) | < 3 s |
+| 2 | RNN | 1,0 | 0,7345 (ép. 13) | 75,94 % | 0,27 – 0,39 (**6,6 × 10⁶ à l'ép. 6**) | **5,24 × 10⁸ (ép. 6)** | < 3 s |
+| 3 | LSTM | 1,0 | **0,5592 (ép. 15)** | **81,89 %** | **0,076 – 0,11** (0,27 à l'ép. 1) | 2,55 (ép. 1), puis ≤ 0,27 | ≈ 6 s |
 
-**Run 1 vs Run 2 (effet du clipping).** **⚠️ À COMPLÉTER** (observation).
+Les 15 époques ont été faites dans les trois cas (pas d'Early Stopping déclenché). Les durées sont très courtes : environ 79 batches par époque sur 10 000 partitions.
+
+**Run 1 vs Run 2 (effet du clipping).**
+
+- **Run 2 : une vraie explosion du gradient, neutralisée.** À l'époque 6, un batch a produit une norme de gradient de **523 758 912** (5,2 × 10⁸), alors que la norme typique est de 0,3. C'est cette seule valeur qui fait monter la moyenne de l'époque à 6,6 × 10⁶ (5,2 × 10⁸ / 79 batches). Grâce au clipping, la mise à jour correspondante a été ramenée à une norme de 1 : la loss n'en a pas souffert (val loss 0,8235 → **0,7870** à cette époque, elle a même baissé), et l'entraînement a continué normalement. Sans clipping, Adam aurait reçu un gradient 10⁹ fois trop grand ; même s'il normalise les pas, un tel gradient contamine ses moyennes de moments pendant des centaines d'itérations et peut faire diverger les poids, voire produire des `NaN`.
+- **Run 1 : pas d'explosion aussi forte cette fois, mais des instabilités.** La norme reste en général entre 0,2 et 0,7, avec des pics à 1,09 (ép. 6) et 1,01 (ép. 13). Ces pics coïncident avec des **remontées de la loss** : à l'époque 6, la train loss remonte (0,7871 → 0,7914) et la val loss aussi (0,7818 → 0,8123) ; aux époques 12–13, la val loss saute de 0,7176 à 0,7683 puis la train loss de 0,7134 à 0,7525. Le RNN sans clipping progresse donc en dents de scie.
+- **En loss finale, les deux runs sont proches** (meilleure val loss 0,7176 sans clipping, 0,7345 avec) : sur un seul tirage, l'écart est du même ordre que les fluctuations d'une époque à l'autre. L'intérêt du clipping n'est pas d'améliorer la loss d'un run qui se passe bien : c'est une **assurance contre les explosions**, qui surviennent de façon imprévisible (ici dans le Run 2 et pas dans le Run 1). Il rend l'entraînement **robuste** sans rien coûter quand les gradients sont normaux (une norme ≤ 1 n'est pas modifiée).
+
+Les deux runs commencent aussi par une norme élevée à la 1re époque (max 7,4 et 8,9), quand les poids aléatoires sont loin d'un bon minimum, puis elle redescend.
 
 Le problème corrigé est l'**explosion du gradient** (*exploding gradient*). En BPTT, le gradient de la loss au temps t par rapport à l'état h_k (k < t) est un produit de t − k jacobiennes :
 
@@ -248,7 +284,13 @@ Le problème corrigé est l'**explosion du gradient** (*exploding gradient*). En
 
 Sa norme se comporte comme ‖W_hh‖^{t−k} (pondéré par les dérivées de tanh ≤ 1). Si la plus grande valeur singulière de W_hh dépasse 1 (ce qui arrive vite avec `lr = 5e-3`), ce produit **croît exponentiellement** avec la distance : sur 499 pas, quelques batches produisent des gradients énormes. La mise à jour correspondante envoie les poids dans une zone de la surface de perte où la loss remonte brutalement (les « falaises » des RNN), d'où des pics de loss et une instabilité. Le clipping **borne la longueur du pas** sans changer sa direction, et supprime ces sauts. Il ne résout pas en revanche le **vanishing gradient** (quand le produit tend vers 0), qui empêche le RNN d'apprendre les dépendances lointaines.
 
-**Run 2 (RNN) vs Run 3 (LSTM).** **⚠️ À COMPLÉTER** (vitesse de convergence, loss et accuracy finales).
+**Run 2 (RNN) vs Run 3 (LSTM).**
+
+- **Convergence beaucoup plus rapide** : dès l'**époque 2**, le LSTM atteint une val loss de 0,6840, meilleure que la meilleure val loss des deux RNN **après 15 époques** (0,7176 et 0,7345). À l'époque 4 (0,6146), il a déjà 0,12 d'avance.
+- **Meilleure performance finale** : val loss **0,5592** contre 0,7345 (−24 %), val accuracy **81,9 %** contre 75,9 % (+6 points ; et +4,6 points face au meilleur RNN, le Run 1).
+- **Entraînement beaucoup plus stable** : la val loss du LSTM baisse à **chaque** époque (aucune remontée), et ses gradients sont plus petits et réguliers : norme moyenne de 0,08 contre 0,3, norme max ≤ 0,27 après la 1re époque, aucune explosion.
+- **Coût** : environ 2 fois plus lent par époque (≈ 6 s contre moins de 3 s), cohérent avec ses 4 fois plus de paramètres récurrents, mais chaque époque rapporte beaucoup plus.
+- On voit apparaître un **début de sur-apprentissage** : à l'époque 15, train loss 0,4907 contre val loss 0,5592 (écart 0,07 qui grandit, alors que la val loss stagne depuis l'époque 11). Avec seulement 10 000 partitions, le LSTM a assez de capacité pour commencer à mémoriser ; plus de données (exercice 4.b) devraient l'améliorer encore.
 
 Explication mathématique. Le LSTM calcule, à partir de x_t et h_{t−1} :
 
@@ -268,7 +310,7 @@ Dans une partition, c'est exactement ce qu'il faut : se souvenir de la métrique
 
 Une partition de 250 caractères paddée à 500 contient **250 espaces de padding**, soit la moitié des cibles. Or prédire le padding est **trivial** : une fois la partition terminée, la cible est toujours un espace, et après un espace de padding vient toujours un espace. Le modèle apprend très vite ce comportement et obtient près de 100 % de réussite sur ces positions.
 
-L'accuracy est calculée sur tous les tokens, padding compris : pour cette partition, même un modèle qui ne prédirait correctement **aucune** note atteindrait ~50 % d'accuracy. Le chiffre affiché mesure donc en grande partie la capacité à « continuer les espaces », pas à prédire la musique. La loss est biaisée de la même façon, vers le bas.
+Sur ce jeu de données, la longueur moyenne est de 290 caractères : en moyenne, **au moins 42 %** des 499 cibles d'une séquence sont du padding. Les 77 % (RNN) et 82 % (LSTM) d'accuracy de mes runs reposent donc en grande partie sur ces positions faciles. L'accuracy est calculée sur tous les tokens, padding compris : pour cette partition, même un modèle qui ne prédirait correctement **aucune** note atteindrait ~50 % d'accuracy. Le chiffre affiché mesure donc en grande partie la capacité à « continuer les espaces », pas à prédire la musique. La loss est biaisée de la même façon, vers le bas.
 
 **Correction simple** : demander à la loss d'ignorer le padding avec `ignore_index` :
 
@@ -311,27 +353,70 @@ La température règle donc le compromis **cohérence (T petit) / diversité (T 
 
 #### 4.a.3 Écoute et analyse qualitative
 
-Amorce : `"X:1\nT:Irish Reel\nM:4/4\nL:1/8\nK:D\n"`, 300 caractères générés, modèle **⚠️ À COMPLÉTER** (LSTM h = 1024 de l'entraînement long, ou LSTM h = 512 du Run 3).
+Amorce : `"X:1\nT:Irish Reel\nM:4/4\nL:1/8\nK:D\n"`, 300 caractères générés, modèle **LSTM h = 1024** de l'entraînement long (meilleur modèle, époque 10), généré automatiquement à la fin du job 14957. Fichiers : `generations/lstm_h1024_T*.abc`.
 
 **T = 0,2**
 
 ```
-⚠️ À COMPLÉTER
+X:1
+T:Irish Reel
+M:4/4
+L:1/8
+K:D
+ A | FD DF AB AF | GF ED EF GB | AF EF DF AF | GB AG FD D2 | FG AF DF AF | GB AF DF AF |
+ GB AF GB AF | GB AF D2 D :| A | de fd ef ge | fd ed cA AB | de fd ef ge | fd ec d2 de | fd ef gf ed |
+ cA Bc dA FA | BA GB AG FE | DE FD EF G :|
 ```
 
 **T = 0,8**
 
 ```
-⚠️ À COMPLÉTER
+X:1
+T:Irish Reel
+M:4/4
+L:1/8
+K:D
+ d | ABAF ABAF | ABde f2fe | dcBA BAFA | Beed e2 (3efg | afef dBAA | BABd d2 :: fe |
+ fdad fddd | fefa abaf | bafe defd | efed BABc | defd BAFA | BAde feef | abaf defd |
+ BABc d2 :|
 ```
 
 **T = 2,0**
 
 ```
-⚠️ À COMPLÉTER
+X:1
+T:Irish Reel
+M:4/4
+L:1/8
+K:D
+"D" AABgxaa3"Bb/F# O B3" (bd')(bg)"Am."a[:e,* Tef)"T:"(3(AEB)]3 g3 a3 |"E7dif 7" e8- |:4[Q:1/8=85 d4) | ad Tf8-{a}{/F} g4 |
+ (f6 ef){a} gfE7/12Gab5/ e\2//4=ABG} |: [EAd8Bwd]8 | [cA]6 (xa-) aB/d=(fg)A-g>e | f7/B^c_b_b(e12de2f) |
+ (a2=g9e^a).f .ec][Ec]S  z2"^+"=o2X:2BL |: EBECF,4- FA,20|[ohDFfO~|[KE
 ```
 
-**⚠️ À COMPLÉTER** : analyse après écoute sur ABC Player (validité syntaxique, richesse musicale).
+**Analyse (après écoute sur ABC Player).**
+
+**T = 0,2 : syntaxe parfaite, musique répétitive.**
+- La partition est **entièrement valide** et chaque mesure fait exactement 8 croches, comme l'exige `M:4/4` avec `L:1/8` : `FD DF AB AF` = 8, `GF ED EF GB` = 8. Le modèle maîtrise même l'**anacrouse** (levée) : la partie commence par une levée `A |` d'une croche, et la dernière mesure de la partie, `GB AF D2 D :|`, ne fait que 7 croches pour compenser. C'est exactement la convention des partitions irlandaises.
+- La **forme** est celle d'un vrai *reel* : une partie A avec reprise `:|`, puis une partie B plus aiguë (`de fd ef ge`), elle aussi reprise.
+- Les notes restent dans **ré majeur** (arpège D–F♯–A, le fa est dièse grâce à `K:D`), et la partie A se termine sur la tonique `D`.
+- Mais c'est très **répétitif** : `GB AF` revient 6 fois et `DF AF` 5 fois. À basse température, le modèle choisit presque toujours le caractère le plus probable : il tourne autour de quelques motifs sûrs. C'est le comportement attendu du décodage presque glouton (T → 0).
+
+**T = 0,8 : le meilleur compromis.**
+- La syntaxe reste **valide** et les mesures sont justes (`Beed e2 (3efg` = 4 + 2 + un triolet de 3 croches en 2 temps = 8), avec des levées (`d |`, `fe |`) et une double reprise `::` entre les deux parties.
+- La mélodie est bien plus **variée** et idiomatique : des gammes descendantes (`dcBA`), un **triolet** `(3efg` typique de la musique irlandaise, une partie B qui monte jusqu'au `b` aigu (`abaf`), et des motifs qui reviennent sans être copiés à l'identique.
+- À l'écoute, ça sonne comme un vrai *reel* irlandais, plus vivant que la version à T = 0,2.
+
+![Partition générée à T = 0,8 dans ABC Player](captures/07_abc_player_genere_T0.8.png)
+
+ABC Player affiche « **No errors** » pour la partition générée à T = 0,8 : la levée, les mesures, le triolet (le « 3 » sous la portée) et la double reprise `::` sont rendus correctement, sur trois lignes de portée en ré majeur (deux dièses).
+
+**T = 2,0 : le chaos.**
+- La partition est **invalide** : faux accords (`"Bb/F# O B3"`, `"E7dif 7"`), crochets et parenthèses non fermés (`[:e,*`, `(f6 ef)`…), durées absurdes (`E7/12`, `e\2//4`, `F,20`), champs d'en-tête insérés au milieu des notes (`[Q:1/8=85`, `X:2`, `[KE`), et des caractères qui ne sont pas des notes (`w`, `O`, `o`).
+- Les mesures n'ont plus de longueur cohérente : ABC Player n'affiche que des fragments, et le résultat ne sonne pas comme de la musique.
+- En divisant les logits par 2, on aplatit la distribution : les caractères peu probables (symboles, chiffres) sont tirés bien plus souvent. On tend vers le tirage **uniforme** décrit en 4.a.2.
+
+**Conclusion.** La température règle bien le compromis **cohérence / diversité** : trop basse, la musique est correcte mais monotone ; trop haute, elle devient du bruit. **T ≈ 0,8** donne ici les meilleures partitions.
 
 ### 4.b Entraînement à plus grande échelle via `sbatch`
 
@@ -345,7 +430,41 @@ train_model(rnn_type="lstm", hidden_size=1024, subset_size=50000,
 
 J'ai choisi `subset_size = 50000` plutôt que `None` pour tenir dans les 2 h du job. `max_minutes = 100` garantit qu'il reste du temps pour la génération finale si les 30 époques ne tiennent pas dans le budget.
 
-**⚠️ À COMPLÉTER** : numéro du job, durée par époque, tableau des époques, meilleure val loss, comparaison avec le Run 3.
+Job **14957** (`sbatch run_music.sh`), sur un GPU. Modèle : **5 372 767 paramètres** (Embedding 24 320, LSTM 5 251 072, fc 97 375). Chaque époque traite 50 000 partitions (391 batches) en **≈ 1,0 min** d'entraînement (plus la validation sur 2 162 partitions) : les 15 époques tiennent largement dans les 2 h du job, et le budget `max_minutes = 100` n'a pas été atteint.
+
+![LSTM long : loss, accuracy et norme des gradients](figures/ex4_lstm_long.png)
+
+| Époque | Train Loss | Val Loss | Val Acc | Norme moyenne | Norme max |
+|---|---|---|---|---|---|
+| 1 | 0,7571 | 0,5743 | 81,29 % | 0,236 | 11,9 |
+| 2 | 0,5464 | 0,5309 | 82,59 % | 0,079 | 0,19 |
+| 3 | 0,5144 | 0,5127 | 83,16 % | 0,069 | 0,16 |
+| 4 | 0,4975 | 0,5024 | 83,63 % | 0,065 | 0,22 |
+| 5 | 0,4833 | 0,4940 | 83,75 % | 0,061 | 0,17 |
+| 6 | 0,4790 | 0,4963 | 83,88 % | 0,061 | 0,21 |
+| 7 | 0,4780 | 0,4954 | 83,77 % | 0,063 | 0,19 |
+| 8 | 0,4912 | 0,4984 | 83,78 % | 0,066 | 0,74 |
+| 9 | 0,4808 | 0,4907 | 83,97 % | 0,063 | 0,32 |
+| **10** | **0,4710** | **0,4893** | **84,00 %** | 0,060 | 0,26 |
+| 11 | 0,4894 | 0,5203 | 83,11 % | 0,069 | 0,57 |
+| 12 | 0,8705 | 0,7090 | 77,60 % | **6,1 × 10⁹** | **1,08 × 10¹²** |
+| 13 | 0,6627 | 0,6322 | 79,71 % | 0,054 | 0,30 |
+| 14 | 0,6097 | 0,5984 | 80,65 % | 0,051 | 0,07 |
+| 15 | 0,5815 | 0,5784 | 81,30 % | 0,051 | 0,11 |
+
+`Early stopping déclenché à l'époque 15.` / `Meilleure val loss : 0.4893 (modèle sauvegardé dans best_lstm_h1024.pth)`.
+
+**Comparaison avec le Run 3** (LSTM h = 512, 10 000 partitions) :
+- Meilleure val loss **0,4893** contre 0,5592 (−12,5 %), et val accuracy **84,0 %** contre 81,9 %.
+- Le modèle dépasse dès l'**époque 1** (0,5743) presque le meilleur résultat du Run 3 après 15 époques : 5 fois plus de données et un état caché 2 fois plus grand font beaucoup mieux, en à peine 1 min par époque.
+- Le sur-apprentissage est bien plus faible : à l'époque 10, l'écart val − train vaut 0,018, contre 0,069 à la fin du Run 3. Avec 50 000 partitions, le modèle mémorise moins.
+
+**Une explosion du gradient malgré le clipping (époque 12).** Un batch a produit une norme de **1,08 × 10¹²**. Le clipping l'a ramenée à 1, mais la loss d'entraînement est quand même remontée de 0,49 à 0,87, et la val loss de 0,49 à 0,71. Pourquoi le clipping n'a-t-il pas suffi ?
+- Il limite la **longueur** du gradient mais garde sa **direction**. Sur une « falaise » de la surface de perte, cette direction est dominée par un petit nombre de paramètres et n'a plus de sens pour le reste du réseau.
+- Avec **Adam**, chaque paramètre est mis à jour par `lr × m / √v`. Pour un paramètre dont les gradients étaient jusque-là minuscules (v très petit), même un gradient de norme ≤ 1 produit un **pas d'environ `lr` = 5 × 10⁻³**, soit un pas énorme pour lui, dans une mauvaise direction. Adam garde ensuite cette valeur dans ses moments pendant des dizaines d'itérations.
+- Le taux d'apprentissage de 5 × 10⁻³ est élevé pour un LSTM de 5,4 M paramètres. On voit d'ailleurs le modèle commencer à se dégrader dès l'époque 11, avant l'explosion. Un taux plus faible, une décroissance du taux (*scheduler*) ou un `max_grad_norm` plus petit rendraient l'entraînement plus robuste.
+
+Grâce à l'**Early Stopping**, cet accident n'a aucune conséquence sur le modèle final : c'est le modèle de l'**époque 10** (meilleure val loss) qui a été sauvegardé et utilisé pour générer les partitions ci-dessus. Sans clipping, une norme de 10¹² aurait très probablement produit des poids infinis (`NaN`) et un modèle inutilisable.
 
 ### 4.c (Bonus) Augmentation de données par transposition
 
@@ -364,4 +483,9 @@ En pratique, on peut s'appuyer sur la bibliothèque `music21`, qui lit l'ABC et 
 
 ## Conclusion
 
-**⚠️ À COMPLÉTER** après les résultats.
+- **Données** : 214 122 partitions ABC, un vocabulaire de 95 caractères. Tronquer à 500 caractères ne coupe que 6,9 % des airs et évite un coût de calcul environ 6 fois plus élevé.
+- **RNN vs LSTM** : à budget égal (10 000 partitions, 15 époques), le LSTM atteint une val loss de 0,559 contre 0,72–0,73 pour le RNN, et fait mieux dès l'époque 2. Sa mise à jour additive de la *cell state* laisse passer le gradient sur de longues distances.
+- **Gradient clipping** : il a neutralisé une explosion à 5 × 10⁸ dans le Run 2 sans aucun effet sur la loss. Dans l'entraînement long, il a évité une divergence totale face à une norme de 10¹², sans empêcher une dégradation temporaire ; l'Early Stopping a conservé le meilleur modèle.
+- **Plus de données** : le LSTM h = 1024 entraîné sur 50 000 partitions atteint 0,489 de val loss et 84,0 % d'accuracy, avec très peu de sur-apprentissage.
+- **Génération** : le modèle produit des *reels* syntaxiquement valides, avec la bonne longueur de mesure, des levées, des reprises et une forme AABB. La température règle le compromis : répétitif à T = 0,2, musical et varié à T = 0,8, chaotique à T = 2,0.
+- **Limite** : l'accuracy (77–84 %) est surestimée par le padding ; il faudrait l'ignorer avec un jeton dédié et `ignore_index`.
