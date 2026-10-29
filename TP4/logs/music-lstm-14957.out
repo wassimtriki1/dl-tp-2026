@@ -1,0 +1,74 @@
+Job 14957 sur starfighter-slurm-node-06-1, mode=full
+Thu Oct 29 11:08:50 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 595.84                 Driver Version: 595.84         CUDA Version: 13.2     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA L4                      Off |   00000000:06:10.0 Off |                    0 |
+| N/A   34C    P8             15W /   72W |       0MiB /  23034MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+
+===== lstm_h1024_sub50000_lr0.005_clip1.0_110903 =====
+Paramètres : 5,372,767 | train : 50000 | val : 2162 | device : cuda
+Epoch 01 | Train Loss: 0.7571 | Val Loss: 0.5743 | Val Acc: 0.8129 | Avg GradNorm: 0.236 | Max GradNorm: 11.915 | Temps: 1.0 min
+Epoch 02 | Train Loss: 0.5464 | Val Loss: 0.5309 | Val Acc: 0.8259 | Avg GradNorm: 0.079 | Max GradNorm: 0.188 | Temps: 0.9 min
+Epoch 03 | Train Loss: 0.5144 | Val Loss: 0.5127 | Val Acc: 0.8316 | Avg GradNorm: 0.069 | Max GradNorm: 0.156 | Temps: 0.9 min
+Epoch 04 | Train Loss: 0.4975 | Val Loss: 0.5024 | Val Acc: 0.8363 | Avg GradNorm: 0.065 | Max GradNorm: 0.224 | Temps: 0.9 min
+Epoch 05 | Train Loss: 0.4833 | Val Loss: 0.4940 | Val Acc: 0.8375 | Avg GradNorm: 0.061 | Max GradNorm: 0.168 | Temps: 1.0 min
+Epoch 06 | Train Loss: 0.4790 | Val Loss: 0.4963 | Val Acc: 0.8388 | Avg GradNorm: 0.061 | Max GradNorm: 0.207 | Temps: 1.0 min
+Epoch 07 | Train Loss: 0.4780 | Val Loss: 0.4954 | Val Acc: 0.8377 | Avg GradNorm: 0.063 | Max GradNorm: 0.193 | Temps: 1.0 min
+Epoch 08 | Train Loss: 0.4912 | Val Loss: 0.4984 | Val Acc: 0.8378 | Avg GradNorm: 0.066 | Max GradNorm: 0.743 | Temps: 1.0 min
+Epoch 09 | Train Loss: 0.4808 | Val Loss: 0.4907 | Val Acc: 0.8397 | Avg GradNorm: 0.063 | Max GradNorm: 0.324 | Temps: 1.0 min
+Epoch 10 | Train Loss: 0.4710 | Val Loss: 0.4893 | Val Acc: 0.8400 | Avg GradNorm: 0.060 | Max GradNorm: 0.259 | Temps: 1.0 min
+Epoch 11 | Train Loss: 0.4894 | Val Loss: 0.5203 | Val Acc: 0.8311 | Avg GradNorm: 0.069 | Max GradNorm: 0.574 | Temps: 1.0 min
+Epoch 12 | Train Loss: 0.8705 | Val Loss: 0.7090 | Val Acc: 0.7760 | Avg GradNorm: 6067966153.883 | Max GradNorm: 1075858112512.000 | Temps: 1.0 min
+Epoch 13 | Train Loss: 0.6627 | Val Loss: 0.6322 | Val Acc: 0.7971 | Avg GradNorm: 0.054 | Max GradNorm: 0.301 | Temps: 1.0 min
+Epoch 14 | Train Loss: 0.6097 | Val Loss: 0.5984 | Val Acc: 0.8065 | Avg GradNorm: 0.051 | Max GradNorm: 0.071 | Temps: 1.0 min
+Epoch 15 | Train Loss: 0.5815 | Val Loss: 0.5784 | Val Acc: 0.8130 | Avg GradNorm: 0.051 | Max GradNorm: 0.107 | Temps: 1.0 min
+Early stopping déclenché à l'époque 15.
+Meilleure val loss : 0.4893 (modèle sauvegardé dans best_lstm_h1024.pth)
+
+----- lstm_h1024 | Température T = 0.2 (generations/lstm_h1024_T0.2.abc) -----
+X:1
+T:Irish Reel
+M:4/4
+L:1/8
+K:D
+ A | FD DF AB AF | GF ED EF GB | AF EF DF AF | GB AG FD D2 | FG AF DF AF | GB AF DF AF | 
+ GB AF GB AF | GB AF D2 D :| A | de fd ef ge | fd ed cA AB | de fd ef ge | fd ec d2 de | fd ef gf ed | 
+ cA Bc dA FA | BA GB AG FE | DE FD EF G :|                                                                
+----- fin -----
+
+----- lstm_h1024 | Température T = 0.8 (generations/lstm_h1024_T0.8.abc) -----
+X:1
+T:Irish Reel
+M:4/4
+L:1/8
+K:D
+ d | ABAF ABAF | ABde f2fe | dcBA BAFA | Beed e2 (3efg | afef dBAA | BABd d2 :: fe | 
+ fdad fddd | fefa abaf | bafe defd | efed BABc | defd BAFA | BAde feef | abaf defd | 
+ BABc d2 :|                                                                                                                     
+----- fin -----
+
+----- lstm_h1024 | Température T = 2.0 (generations/lstm_h1024_T2.0.abc) -----
+X:1
+T:Irish Reel
+M:4/4
+L:1/8
+K:D
+"D" AABgxaa3"Bb/F# O B3" (bd')(bg)"Am."a[:e,* Tef)"T:"(3(AEB)]3 g3 a3 |"E7dif 7" e8- |:4[Q:1/8=85 d4) | ad Tf8-{a}{/F} g4 | 
+ (f6 ef){a} gfE7/12Gab5/ e\2//4=ABG} |: [EAd8Bwd]8 | [cA]6 (xa-) aB/d=(fg)A-g>e | f7/B^c_b_b(e12de2f) | 
+ (a2=g9e^a).f .ec][Ec]S  z2"^+"=o2X:2BL |: EBECF,4- FA,20|[ohDFfO~|[KE
+----- fin -----

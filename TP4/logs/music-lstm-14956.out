@@ -1,0 +1,78 @@
+Job 14956 sur starfighter-slurm-node-05-1, mode=quick
+Thu Oct 29 11:08:32 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 595.84                 Driver Version: 595.84         CUDA Version: 13.2     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA L4                      Off |   00000000:06:10.0 Off |                    0 |
+| N/A   33C    P8             16W /   72W |       0MiB /  23034MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+
+===== rnn_h512_sub10000_lr0.005_noclip_110858 =====
+Paramètres : 467,295 | train : 10000 | val : 2162 | device : cuda
+Epoch 01 | Train Loss: 1.2251 | Val Loss: 0.9517 | Val Acc: 0.7173 | Avg GradNorm: 0.702 | Max GradNorm: 7.423 | Temps: 0.2 min
+Epoch 02 | Train Loss: 0.9035 | Val Loss: 0.8608 | Val Acc: 0.7364 | Avg GradNorm: 0.361 | Max GradNorm: 0.656 | Temps: 0.0 min
+Epoch 03 | Train Loss: 0.8408 | Val Loss: 0.8304 | Val Acc: 0.7431 | Avg GradNorm: 0.345 | Max GradNorm: 0.545 | Temps: 0.0 min
+Epoch 04 | Train Loss: 0.8080 | Val Loss: 0.8384 | Val Acc: 0.7457 | Avg GradNorm: 0.284 | Max GradNorm: 0.626 | Temps: 0.0 min
+Epoch 05 | Train Loss: 0.7871 | Val Loss: 0.7818 | Val Acc: 0.7548 | Avg GradNorm: 0.296 | Max GradNorm: 0.736 | Temps: 0.0 min
+Epoch 06 | Train Loss: 0.7914 | Val Loss: 0.8123 | Val Acc: 0.7502 | Avg GradNorm: 0.302 | Max GradNorm: 1.093 | Temps: 0.0 min
+Epoch 07 | Train Loss: 0.7568 | Val Loss: 0.7610 | Val Acc: 0.7598 | Avg GradNorm: 0.270 | Max GradNorm: 0.678 | Temps: 0.0 min
+Epoch 08 | Train Loss: 0.7416 | Val Loss: 0.7457 | Val Acc: 0.7642 | Avg GradNorm: 0.277 | Max GradNorm: 0.464 | Temps: 0.0 min
+Epoch 09 | Train Loss: 0.7352 | Val Loss: 0.7275 | Val Acc: 0.7712 | Avg GradNorm: 0.276 | Max GradNorm: 0.524 | Temps: 0.0 min
+Epoch 10 | Train Loss: 0.7203 | Val Loss: 0.7289 | Val Acc: 0.7721 | Avg GradNorm: 0.238 | Max GradNorm: 0.405 | Temps: 0.0 min
+Epoch 11 | Train Loss: 0.7140 | Val Loss: 0.7176 | Val Acc: 0.7746 | Avg GradNorm: 0.244 | Max GradNorm: 0.365 | Temps: 0.0 min
+Epoch 12 | Train Loss: 0.7134 | Val Loss: 0.7683 | Val Acc: 0.7626 | Avg GradNorm: 0.253 | Max GradNorm: 0.376 | Temps: 0.0 min
+Epoch 13 | Train Loss: 0.7525 | Val Loss: 0.7312 | Val Acc: 0.7715 | Avg GradNorm: 0.278 | Max GradNorm: 1.009 | Temps: 0.0 min
+Epoch 14 | Train Loss: 0.7249 | Val Loss: 0.7397 | Val Acc: 0.7691 | Avg GradNorm: 0.256 | Max GradNorm: 0.824 | Temps: 0.0 min
+Epoch 15 | Train Loss: 0.7119 | Val Loss: 0.7221 | Val Acc: 0.7733 | Avg GradNorm: 0.222 | Max GradNorm: 0.323 | Temps: 0.0 min
+Meilleure val loss : 0.7176 (modèle sauvegardé dans best_rnn_h512.pth)
+
+===== rnn_h512_sub10000_lr0.005_clip1.0_110949 =====
+Paramètres : 467,295 | train : 10000 | val : 2162 | device : cuda
+Epoch 01 | Train Loss: 1.2624 | Val Loss: 0.9411 | Val Acc: 0.7187 | Avg GradNorm: 0.980 | Max GradNorm: 8.921 | Temps: 0.0 min
+Epoch 02 | Train Loss: 0.9022 | Val Loss: 0.8658 | Val Acc: 0.7337 | Avg GradNorm: 0.388 | Max GradNorm: 0.948 | Temps: 0.0 min
+Epoch 03 | Train Loss: 0.8459 | Val Loss: 0.8288 | Val Acc: 0.7443 | Avg GradNorm: 0.367 | Max GradNorm: 0.644 | Temps: 0.0 min
+Epoch 04 | Train Loss: 0.8138 | Val Loss: 0.8168 | Val Acc: 0.7462 | Avg GradNorm: 0.337 | Max GradNorm: 0.527 | Temps: 0.0 min
+Epoch 05 | Train Loss: 0.7921 | Val Loss: 0.8235 | Val Acc: 0.7452 | Avg GradNorm: 0.320 | Max GradNorm: 0.557 | Temps: 0.0 min
+Epoch 06 | Train Loss: 0.7882 | Val Loss: 0.7870 | Val Acc: 0.7553 | Avg GradNorm: 6629859.980 | Max GradNorm: 523758912.000 | Temps: 0.0 min
+Epoch 07 | Train Loss: 0.7726 | Val Loss: 0.7958 | Val Acc: 0.7558 | Avg GradNorm: 0.326 | Max GradNorm: 0.664 | Temps: 0.0 min
+Epoch 08 | Train Loss: 0.7610 | Val Loss: 0.7686 | Val Acc: 0.7592 | Avg GradNorm: 0.288 | Max GradNorm: 0.497 | Temps: 0.0 min
+Epoch 09 | Train Loss: 0.7509 | Val Loss: 0.7614 | Val Acc: 0.7637 | Avg GradNorm: 0.290 | Max GradNorm: 0.472 | Temps: 0.0 min
+Epoch 10 | Train Loss: 0.7446 | Val Loss: 0.7553 | Val Acc: 0.7655 | Avg GradNorm: 0.282 | Max GradNorm: 0.528 | Temps: 0.0 min
+Epoch 11 | Train Loss: 0.7401 | Val Loss: 0.7478 | Val Acc: 0.7663 | Avg GradNorm: 0.310 | Max GradNorm: 0.456 | Temps: 0.0 min
+Epoch 12 | Train Loss: 0.7344 | Val Loss: 0.7360 | Val Acc: 0.7710 | Avg GradNorm: 0.299 | Max GradNorm: 0.428 | Temps: 0.0 min
+Epoch 13 | Train Loss: 0.7279 | Val Loss: 0.7345 | Val Acc: 0.7698 | Avg GradNorm: 0.278 | Max GradNorm: 0.414 | Temps: 0.0 min
+Epoch 14 | Train Loss: 0.7327 | Val Loss: 0.7634 | Val Acc: 0.7606 | Avg GradNorm: 0.301 | Max GradNorm: 0.791 | Temps: 0.0 min
+Epoch 15 | Train Loss: 0.7255 | Val Loss: 0.7631 | Val Acc: 0.7594 | Avg GradNorm: 0.272 | Max GradNorm: 0.525 | Temps: 0.0 min
+Meilleure val loss : 0.7345 (modèle sauvegardé dans best_rnn_h512.pth)
+
+===== lstm_h512_sub10000_lr0.005_clip1.0_111030 =====
+Paramètres : 1,650,015 | train : 10000 | val : 2162 | device : cuda
+Epoch 01 | Train Loss: 1.1226 | Val Loss: 0.7929 | Val Acc: 0.7554 | Avg GradNorm: 0.274 | Max GradNorm: 2.553 | Temps: 0.1 min
+Epoch 02 | Train Loss: 0.7289 | Val Loss: 0.6840 | Val Acc: 0.7830 | Avg GradNorm: 0.112 | Max GradNorm: 0.228 | Temps: 0.1 min
+Epoch 03 | Train Loss: 0.6587 | Val Loss: 0.6386 | Val Acc: 0.7953 | Avg GradNorm: 0.087 | Max GradNorm: 0.267 | Temps: 0.1 min
+Epoch 04 | Train Loss: 0.6172 | Val Loss: 0.6146 | Val Acc: 0.8023 | Avg GradNorm: 0.076 | Max GradNorm: 0.161 | Temps: 0.1 min
+Epoch 05 | Train Loss: 0.5915 | Val Loss: 0.5960 | Val Acc: 0.8078 | Avg GradNorm: 0.080 | Max GradNorm: 0.174 | Temps: 0.1 min
+Epoch 06 | Train Loss: 0.5721 | Val Loss: 0.5874 | Val Acc: 0.8099 | Avg GradNorm: 0.083 | Max GradNorm: 0.198 | Temps: 0.1 min
+Epoch 07 | Train Loss: 0.5600 | Val Loss: 0.5761 | Val Acc: 0.8130 | Avg GradNorm: 0.083 | Max GradNorm: 0.234 | Temps: 0.1 min
+Epoch 08 | Train Loss: 0.5462 | Val Loss: 0.5721 | Val Acc: 0.8146 | Avg GradNorm: 0.084 | Max GradNorm: 0.151 | Temps: 0.1 min
+Epoch 09 | Train Loss: 0.5358 | Val Loss: 0.5661 | Val Acc: 0.8157 | Avg GradNorm: 0.078 | Max GradNorm: 0.162 | Temps: 0.1 min
+Epoch 10 | Train Loss: 0.5266 | Val Loss: 0.5630 | Val Acc: 0.8175 | Avg GradNorm: 0.080 | Max GradNorm: 0.165 | Temps: 0.1 min
+Epoch 11 | Train Loss: 0.5190 | Val Loss: 0.5612 | Val Acc: 0.8180 | Avg GradNorm: 0.086 | Max GradNorm: 0.173 | Temps: 0.1 min
+Epoch 12 | Train Loss: 0.5092 | Val Loss: 0.5604 | Val Acc: 0.8183 | Avg GradNorm: 0.076 | Max GradNorm: 0.137 | Temps: 0.1 min
+Epoch 13 | Train Loss: 0.5021 | Val Loss: 0.5601 | Val Acc: 0.8187 | Avg GradNorm: 0.083 | Max GradNorm: 0.177 | Temps: 0.1 min
+Epoch 14 | Train Loss: 0.4960 | Val Loss: 0.5596 | Val Acc: 0.8187 | Avg GradNorm: 0.087 | Max GradNorm: 0.189 | Temps: 0.1 min
+Epoch 15 | Train Loss: 0.4907 | Val Loss: 0.5592 | Val Acc: 0.8189 | Avg GradNorm: 0.079 | Max GradNorm: 0.156 | Temps: 0.1 min
+Meilleure val loss : 0.5592 (modèle sauvegardé dans best_lstm_h512.pth)

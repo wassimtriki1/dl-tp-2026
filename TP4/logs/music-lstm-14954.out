@@ -1,0 +1,46 @@
+Job 14954 sur starfighter-slurm-node-04-1, mode=explore
+Thu Oct 29 11:07:49 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 595.84                 Driver Version: 595.84         CUDA Version: 13.2     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA L4                      Off |   00000000:06:10.0 Off |                    0 |
+| N/A   33C    P8             15W /   72W |       0MiB /  23034MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Nombre de chansons (Train) : 214122
+Nombre de chansons (Val)   : 2162
+
+--- Exemple de partition (Train[0]) ---
+X:1
+L:1/8
+M:4/4
+K:Emin
+|: E2 EF E2 EF | DEFG AFDF | E2 EF E2 B2 |1 efe^d e2 e2 :|2 efe^d e3 B |: e2 ef g2 fe | 
+ defg afdf |1 e2 ef g2 fe | efe^d e3 B :|2 g2 bg f2 af | efe^d e2 e2 ||
+--- fin ---
+
+Taille du vocabulaire : 95 caractères uniques
+Vocabulaire : '\n !"#$&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~'
+Longueur moyenne : 290.1 | Longueur max : 2968
+Partitions > 500 caractères (tronquées) : 14697 (6.9 %)
+Médiane : 257 | 95e percentile : 548
+
+Shapes d'un batch : x = (128, 499) (torch.int64), y = (128, 499) (torch.int64)
+Vérification du décalage : x[0, 1:6] = [26, 17, 0, 44, 26] | y[0, 0:5] = [26, 17, 0, 44, 26]
+
+Nombre de paramètres (embedding_dim=256, hidden_size=512) :
+  RNN  | embedding :    24,320 | rnn :   394,240 | fc :  48,735 | total :    467,295
+  LSTM | embedding :    24,320 | lstm : 1,576,960 | fc :  48,735 | total :  1,650,015
+Avec vocab_size = 95 (énoncé) : RNN total = 467,295 | LSTM total = 1,650,015
