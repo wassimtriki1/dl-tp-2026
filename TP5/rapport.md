@@ -1,4 +1,4 @@
-# TP5 — Image Captioning avec RNN et attention sur ResNet
+# TP5  Image Captioning avec RNN et attention sur ResNet
 
 **Auteur :** Wassim Triki
 
