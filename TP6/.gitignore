@@ -3,3 +3,4 @@ best.pth
 logs/
 runs/
 __pycache__/
+captures/*.gz

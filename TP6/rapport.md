@@ -105,9 +105,15 @@ Capture small-w3 :
 
 ![trace small-w3](captures/small-w3.png)
 
-Les deux configurations atteignent plus de 97 % du débit synthétique fp32 (voir le tableau ci-dessus) : le profil type est donc **limité par le calcul**, pas par les données ni par le lancement. Ce que la trace doit montrer pour le justifier : sur la ligne du flux CUDA, les noyaux de convolution (cudnn, `implicit_gemm`) s'enchaînent presque sans trou, l'événement `enumerate(DataLoader)#..._MultiProcessingDataLoaderIter.__next__` est court devant la durée d'un pas, et les copies `Memcpy HtoD` sont courtes. Les workers préparent alors les batchs plus vite que le GPU ne les consomme. Le tableau du profiler (`cuda_time_total`) est dominé par les noyaux de convolution (`dgrad`, `fprop implicit_gemm`).
+**Lecture de la trace raw-w3 :**
 
-> À VÉRIFIER AVANT RENDU : relire ce paragraphe en regardant tes deux captures, et corriger si tu vois des trous dans le flux CUDA ou une attente longue sur `__next__`.
+- Le flux CUDA (`stream 7`, sous `python 0`) est **rempli en continu** pendant toute la trace : les noyaux de convolution et les autres noyaux s'enchaînent sans trou visible. Le GPU ne manque pas de travail.
+- Côté CPU, le thread principal et le thread `pt_autograd_0` ne servent qu'à **lancer** les noyaux. Les 5 pas profilés (`ProfilerStep#3` à `#7`) durent environ 120 ms chacun, et les lancements du dernier pas se terminent vers 430 ms, alors que le GPU travaille encore jusqu'à environ 580 ms. Le thread principal attend cet écart (environ 150 ms) dans `cudaDeviceSynchronize`, le grand bloc orange à droite. Le CPU a donc de l'avance sur le GPU : la file de noyaux ne se vide jamais.
+- Je n'ai pas isolé d'attente notable sur `enumerate(DataLoader)...__next__` : les batchs sont prêts quand le GPU en a besoin.
+
+Le profil type est donc **limité par le calcul** (le GPU est le facteur limitant), et non par les données ni par le lancement. C'est cohérent avec le débit : raw-w3 atteint plus de 98 % du débit synthétique fp32.
+
+**Lecture de la trace small-w3 :** même profil que raw-w3. Le flux CUDA (`stream 7`) est rempli en continu sans trou visible, les 5 pas (`ProfilerStep#3` à `#7`) ne servent qu'à lancer les noyaux côté CPU, et le thread principal termine par un long `cudaDeviceSynchronize` (le GPU finit après le CPU). Le profil est **limité par le calcul**, ce qui correspond au débit (713,6 img/s, soit 97,8 % du débit synthétique). La copie redimensionnée accélère le décodage (t_d ≈ 2,29 ms contre 2,90 ms), mais en fp32 cet avantage ne se voit pas sur le débit : le GPU est déjà le facteur limitant. Il apparaîtrait avec un GPU plus rapide (bf16, `compile`), comme on l'a vu à l'exercice 3.
 
 **Fraction du débit synthétique avec la meilleure configuration de chargement :** raw-w3 donne 720,6 / 729,3 ≈ **98,8 %** (small-w3 : 97,8 %). L'écart entre raw et small est dans le bruit de mesure, car le GPU limite en fp32.
 
