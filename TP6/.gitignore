@@ -1,0 +1,5 @@
+captures/*.json
+best.pth
+logs/
+runs/
+__pycache__/

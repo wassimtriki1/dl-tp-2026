@@ -1,0 +1,6 @@
+tag,materiel,processus,noeuds,backend,precision,bf16_hook,donnees,accumulation,batch_par_processus,batch_effectif,pas_ms,img_s
+l4-x1,NVIDIA L4,1,1,nccl,bf16,False,synthetic,1,64,64,136.5,468.7
+l4-x2,NVIDIA L4,2,2,nccl,bf16,False,synthetic,1,64,128,867.6,147.5
+l4-x2-bf16hook,NVIDIA L4,2,2,nccl,bf16,True,synthetic,1,64,128,463.2,276.4
+l4-x1-accum8,NVIDIA L4,1,1,nccl,bf16,False,synthetic,8,64,512,1036.8,493.8
+l4-x2-accum8-bf16hook,NVIDIA L4,2,2,nccl,bf16,True,synthetic,8,64,1024,1359.1,753.4
